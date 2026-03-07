@@ -231,6 +231,65 @@
 
     .pill:hover { background: rgba(74,222,128,0.15); border-color: #4ade80; color: #f0fdf4; }
     .pill.active { background: rgba(74,222,128,0.25); border-color: #4ade80; color: #f0fdf4; }
+
+    .wishlist-callout {
+      max-width: 900px;
+      margin: 28px auto 0;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 18px 24px;
+      border-radius: 14px;
+      background: rgba(251,191,36,0.07);
+      border: 1px solid rgba(251,191,36,0.25);
+      border-left: 4px solid #f59e0b;
+    }
+
+    .wishlist-callout-icon {
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+
+    .wishlist-callout-text {
+      flex: 1;
+    }
+
+    .wishlist-callout-text strong {
+      display: block;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fde68a;
+      margin-bottom: 4px;
+    }
+
+    .wishlist-callout-text p {
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.45;
+    }
+
+    .btn-giftful {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 18px;
+      border-radius: 10px;
+      border: 1px solid rgba(251,191,36,0.45);
+      background: rgba(251,191,36,0.12);
+      color: #fde68a;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .btn-giftful:hover { background: rgba(251,191,36,0.22); transform: translateY(-1px); }
+
+    @media (max-width: 560px) {
+      .wishlist-callout { flex-direction: column; align-items: flex-start; gap: 12px; }
+    }
   </style>
 </head>
 <body>
@@ -249,6 +308,15 @@
     </div>
     <div class="category-pills" id="category-pills"></div>
   </header>
+
+  <div class="wishlist-callout">
+    <div class="wishlist-callout-icon">🎁</div>
+    <div class="wishlist-callout-text">
+      <strong>Replacing Amazon's Wishlist?</strong>
+      <p>Giftful lets you save gift ideas from any store and share them with friends and family.</p>
+    </div>
+    <a class="btn-giftful" href="https://giftful.com" target="_blank" rel="noopener noreferrer">🌐 Try Giftful</a>
+  </div>
 
   <div id="results-area">
     <div class="empty-state">Type something you'd normally buy on Amazon ↑</div>

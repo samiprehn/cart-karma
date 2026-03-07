@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cart Karma — Ethical Amazon Alternative Finder</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #14532d 0%, #064e3b 100%);
+      color: #f0fdf4;
+      padding: 0 16px 64px;
+    }
+
+    header {
+      text-align: center;
+      padding: 56px 16px 32px;
+    }
+
+    .logo {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(90deg, #4ade80, #a3e635);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tagline {
+      margin-top: 8px;
+      font-size: 1.1rem;
+      color: #86efac;
+      opacity: 0.9;
+    }
+
+    .search-wrap {
+      max-width: 640px;
+      margin: 32px auto 0;
+      display: flex;
+      gap: 10px;
+    }
+
+    #search-input {
+      flex: 1;
+      padding: 14px 20px;
+      border-radius: 12px;
+      border: 2px solid #166534;
+      background: rgba(255,255,255,0.08);
+      color: #f0fdf4;
+      font-size: 1.05rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    #search-input::placeholder { color: #86efac; opacity: 0.6; }
+    #search-input:focus { border-color: #4ade80; background: rgba(255,255,255,0.12); }
+
+    #search-btn {
+      padding: 14px 28px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #16a34a, #15803d);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.2s;
+      white-space: nowrap;
+    }
+
+    #search-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+    #search-btn:active { transform: translateY(0); }
+
+    #results-area {
+      max-width: 900px;
+      margin: 40px auto 0;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 16px;
+      color: #86efac;
+      font-size: 1.1rem;
+      opacity: 0.7;
+    }
+
+    .results-header {
+      font-size: 0.9rem;
+      color: #86efac;
+      margin-bottom: 20px;
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      border-left: 3px solid #4ade80;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeInUp 0.35s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-header {
+      padding: 16px 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .card-header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .store-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .type-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .store-why {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.4;
+    }
+
+    /* Header gradient by type */
+    .card-header.indie     { background: linear-gradient(135deg, #0d9488, #0ea5e9); }
+    .card-header.coop      { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+    .card-header.bcorp     { background: linear-gradient(135deg, #16a34a, #15803d); }
+    .card-header.secondhand { background: linear-gradient(135deg, #d97706, #b45309); }
+    .card-header.local-finder { background: linear-gradient(135deg, #4f46e5, #7c3aed); }
+
+    .card-body {
+      padding: 14px 18px 16px;
+    }
+
+    .card-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .btn-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.15s, transform 0.1s;
+      cursor: pointer;
+    }
+
+    .btn-link:hover { transform: translateY(-1px); }
+
+    .btn-website {
+      background: rgba(255,255,255,0.12);
+      color: #f0fdf4;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .btn-website:hover { background: rgba(255,255,255,0.2); }
+
+    .btn-search {
+      background: rgba(74,222,128,0.15);
+      color: #4ade80;
+      border: 1px solid rgba(74,222,128,0.3);
+    }
+
+    .btn-search:hover { background: rgba(74,222,128,0.25); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">🛒 Cart Karma</div>
+    <p class="tagline">Find ethical alternatives to Amazon — independent, cooperative, and secondhand.</p>
+    <div class="search-wrap">
+      <input
+        id="search-input"
+        type="text"
+        placeholder="What do you want to buy?"
+        autocomplete="off"
+        autofocus
+      />
+      <button id="search-btn">Find Alternatives</button>
+    </div>
+  </header>
+
+  <div id="results-area">
+    <div class="empty-state">Type something you'd normally buy on Amazon ↑</div>
+  </div>
+
+  <script>
+    const CATEGORIES = {
+      books: {
+        keywords: ['book','novel','textbook','audiobook','kindle','ebook','fiction','nonfiction','thriller','memoir','biography','poetry','graphic novel','manga','comic','literature','reading','paperback','hardcover'],
+        alternatives: [
+          { name: 'Bookshop.org', website: 'https://bookshop.org', search_url: 'https://bookshop.org/search?keywords={q}', type: 'bcorp', why: 'B Corp certified. 10% of every purchase goes directly to independent bookstores.' },
+          { name: 'Better World Books', website: 'https://www.betterworldbooks.com', search_url: 'https://www.betterworldbooks.com/search/results?q={q}', type: 'bcorp', why: 'B Corp certified. Buys and sells used books, funds literacy programs worldwide.' },
+          { name: 'ThriftBooks', website: 'https://www.thriftbooks.com', search_url: 'https://www.thriftbooks.com/browse/?b.search={q}', type: 'secondhand', why: 'Huge selection of used books at low prices — keeps books out of landfills.' },
+          { name: 'IndieBound', website: 'https://www.indiebound.org', search_url: 'https://www.indiebound.org/search/book?keys={q}', type: 'local-finder', why: 'Connects you with your nearest independent bookstore and lets you buy there.' },
+          { name: 'Libro.fm', website: 'https://libro.fm', search_url: 'https://libro.fm/search?search%5Bquery%5D={q}', type: 'indie', why: 'Audiobook platform that lets your purchase support a local bookstore of your choice.' },
+          { name: 'eBay (Used Books)', website: 'https://www.ebay.com', search_url: 'https://www.ebay.com/sch/i.html?_nkw={q}+book&LH_ItemCondition=3000', type: 'secondhand', why: 'Large secondhand marketplace — search used condition to keep books in circulation.' },
+        ]
+      },
+      clothing: {
+        keywords: ['shirt','t-shirt','shoes','sneakers','boots','jeans','jacket','coat','dress','pants','hoodie','sweater','socks','underwear','shorts','leggings','clothing','apparel','fashion','outfit','wear','hat','cap','scarf','gloves','swimwear','activewear','sportswear','uniform'],
+        alternatives: [
+          { name: 'ThredUp', website: 'https://www.thredup.com', search_url: 'https://www.thredup.com/products?search_text={q}', type: 'secondhand', why: 'Online consignment store — buying secondhand extends clothing life and cuts waste.' },
+          { name: 'Depop', website: 'https://www.depop.com', search_url: 'https://www.depop.com/search/?q={q}', type: 'secondhand', why: 'Peer-to-peer secondhand fashion marketplace, popular for unique and vintage finds.' },
+          { name: 'Poshmark', website: 'https://poshmark.com', search_url: 'https://poshmark.com/search?query={q}', type: 'secondhand', why: 'Social commerce platform for buying and selling secondhand clothing and accessories.' },
+          { name: 'Patagonia', website: 'https://www.patagonia.com', search_url: 'https://www.patagonia.com/search/?q={q}', type: 'bcorp', why: 'B Corp certified. 1% of sales goes to environmental causes; radical supply chain transparency.' },
+          { name: 'Allbirds', website: 'https://www.allbirds.com', search_url: 'https://www.allbirds.com/pages/search?q={q}', type: 'bcorp', why: 'B Corp certified. Carbon-neutral footwear made from sustainable natural materials.' },
+          { name: 'Eileen Fisher', website: 'https://www.eileenfisher.com', search_url: 'https://www.eileenfisher.com/search?q={q}', type: 'bcorp', why: 'B Corp certified. Takes-back old garments for resale or recycling via Renew program.' },
+        ]
+      },
+      electronics: {
+        keywords: ['laptop','computer','phone','smartphone','tablet','ipad','headphones','earbuds','speaker','monitor','keyboard','mouse','charger','cable','battery','camera','tv','television','gaming','console','printer','router','smart home','alexa','echo','fire tv','ring'],
+        alternatives: [
+          { name: 'Back Market', website: 'https://www.backmarket.com', search_url: 'https://www.backmarket.com/en-us/search?q={q}', type: 'bcorp', why: 'B Corp certified. Certified refurbished electronics — extends device life, cuts e-waste.' },
+          { name: 'Swappa', website: 'https://swappa.com', search_url: 'https://swappa.com/buy/search?q={q}', type: 'secondhand', why: 'Peer-to-peer marketplace for used phones, laptops, and gear — vetted listings, safe.' },
+          { name: 'iFixit', website: 'https://www.ifixit.com', search_url: 'https://www.ifixit.com/Search?query={q}', type: 'indie', why: 'Repair guides and parts to fix your existing devices — the most ethical option of all.' },
+          { name: 'eBay (Refurbished)', website: 'https://www.ebay.com', search_url: 'https://www.ebay.com/sch/i.html?_nkw={q}&LH_ItemCondition=2000', type: 'secondhand', why: 'Certified refurbished electronics — huge selection, money-back guarantee on most items.' },
+          { name: 'Decluttr', website: 'https://www.decluttr.com', search_url: 'https://www.decluttr.com/search?q={q}', type: 'secondhand', why: 'Graded used tech at significant discounts — phones, tablets, gaming, and more.' },
+        ]
+      },
+      music: {
+        keywords: ['vinyl','record','cd','album','bandcamp','music','turntable','lp','cassette','tape','guitar','piano','instrument','sheet music','musician','band','concert','playlist','streaming'],
+        alternatives: [
+          { name: 'Bandcamp', website: 'https://bandcamp.com', search_url: 'https://bandcamp.com/search?q={q}', type: 'indie', why: 'Artists keep 80–85% of revenue. Directly funds musicians and independent labels.' },
+          { name: 'Discogs', website: 'https://www.discogs.com', search_url: 'https://www.discogs.com/search/?q={q}', type: 'secondhand', why: 'Global marketplace for used vinyl, CDs, and tapes — connects directly with sellers.' },
+          { name: 'Record Store Day Finder', website: 'https://www.recordstoreday.com/FindAStore', search_url: null, type: 'local-finder', why: 'Locate your nearest independent record store for in-person browsing and support.' },
+          { name: 'Rough Trade', website: 'https://www.roughtrade.com', search_url: 'https://www.roughtrade.com/search?query={q}', type: 'indie', why: 'Iconic independent music retailer with physical stores and strong artist relationships.' },
+        ]
+      },
+      outdoor: {
+        keywords: ['hiking','camping','tent','backpack','sleeping bag','kayak','canoe','climbing','bike','bicycle','fishing','hunting','trail','outdoor','ski','snowboard','surfboard','paddleboard','hammock','trekking','running','marathon','triathlon'],
+        alternatives: [
+          { name: 'REI', website: 'https://www.rei.com', search_url: 'https://www.rei.com/search?q={q}', type: 'coop', why: 'Consumer co-op owned by its members. Returns dividends to members and funds trail conservation.' },
+          { name: 'GearTrade', website: 'https://www.geartrade.com', search_url: 'https://www.geartrade.com/search?q={q}', type: 'secondhand', why: 'Used outdoor gear marketplace — quality secondhand equipment at fair prices.' },
+          { name: 'Patagonia Worn Wear', website: 'https://wornwear.patagonia.com', search_url: 'https://wornwear.patagonia.com/search?q={q}', type: 'bcorp', why: 'Buy certified used Patagonia gear — repaired and resold by the brand itself.' },
+          { name: 'SidelineSwap', website: 'https://sidelineswap.com', search_url: 'https://sidelineswap.com/search?q={q}', type: 'secondhand', why: 'Sports and outdoor gear resale — great for seasonal or one-use items.' },
+          { name: 'Steep & Cheap', website: 'https://www.steepandcheap.com', search_url: 'https://www.steepandcheap.com/search?q={q}', type: 'indie', why: 'Flash deals on outdoor gear from independent and specialty brands — not Amazon-owned.' },
+        ]
+      },
+      home: {
+        keywords: ['furniture','couch','sofa','chair','table','desk','bed','mattress','lamp','rug','curtain','pillow','blanket','cookware','pot','pan','knife','dishes','towel','bedding','shelf','cabinet','dresser','decor','vase','frame','candle','kitchen','bathroom'],
+        alternatives: [
+          { name: 'Chairish', website: 'https://www.chairish.com', search_url: 'https://www.chairish.com/search/{q}', type: 'secondhand', why: 'Curated secondhand and vintage furniture and decor — beautiful pieces, less waste.' },
+          { name: 'Facebook Marketplace', website: 'https://www.facebook.com/marketplace', search_url: 'https://www.facebook.com/marketplace/search?query={q}', type: 'secondhand', why: 'Local peer-to-peer sales — low-cost secondhand items with zero shipping footprint.' },
+          { name: 'Buy Nothing (App)', website: 'https://buynothingproject.org', search_url: null, type: 'local-finder', why: 'Hyper-local gifting groups — get items completely free from your neighbors.' },
+          { name: 'Craigslist', website: 'https://craigslist.org', search_url: null, type: 'secondhand', why: 'Classic local classifieds — huge inventory of used home goods at low prices.' },
+          { name: 'OfferUp', website: 'https://offerup.com', search_url: 'https://offerup.com/search/?q={q}', type: 'secondhand', why: 'Local and nationwide secondhand marketplace — furniture, appliances, décor, and more.' },
+        ]
+      },
+      tools: {
+        keywords: ['drill','hammer','saw','wrench','screwdriver','tool','plumbing','electrical','lumber','hardware','plywood','pipe','paint','ladder','lawn mower','leaf blower','pressure washer','garden','gardening','hose','shovel','rake','mulch','seeds','fertilizer'],
+        alternatives: [
+          { name: 'Ace Hardware', website: 'https://www.acehardware.com', search_url: 'https://www.acehardware.com/search?query={q}', type: 'coop', why: 'Retailer-owned cooperative — Ace stores are independently owned local businesses.' },
+          { name: 'Local Tool Library', website: 'https://localtools.org', search_url: null, type: 'coop', why: 'Borrow tools instead of buying — a cooperative model that saves money and resources.' },
+          { name: 'eBay (Used Tools)', website: 'https://www.ebay.com', search_url: 'https://www.ebay.com/sch/i.html?_nkw={q}+tool&LH_ItemCondition=3000', type: 'secondhand', why: 'Quality used tools last decades — buying secondhand keeps them out of landfills.' },
+          { name: 'Harbor Freight (Independent)', website: 'https://www.harborfreight.com', search_url: 'https://www.harborfreight.com/catalogsearch/result/?q={q}', type: 'indie', why: 'Privately-owned, not Amazon or big-box. Budget-friendly tools for occasional use.' },
+        ]
+      },
+      beauty: {
+        keywords: ['shampoo','conditioner','soap','body wash','makeup','lipstick','foundation','mascara','skincare','moisturizer','sunscreen','serum','lotion','razor','deodorant','toothbrush','toothpaste','perfume','cologne','nail polish','hair dye','face wash','cleanser'],
+        alternatives: [
+          { name: 'Package Free Shop', website: 'https://packagefreeshop.com', search_url: 'https://packagefreeshop.com/search?type=product&q={q}', type: 'bcorp', why: 'Zero-waste personal care and home products — minimal or compostable packaging.' },
+          { name: 'Grove Collaborative', website: 'https://www.grove.co', search_url: 'https://www.grove.co/catalog?search={q}', type: 'bcorp', why: 'B Corp certified. Natural and sustainable home and personal care products.' },
+          { name: 'Credo Beauty', website: 'https://credobeauty.com', search_url: 'https://credobeauty.com/search?q={q}', type: 'indie', why: 'Clean beauty retailer with strict ingredient standards and ethical brand curation.' },
+          { name: 'EWG Verified (Skin Deep)', website: 'https://www.ewg.org/skindeep', search_url: 'https://www.ewg.org/skindeep/search/?search={q}', type: 'local-finder', why: 'Not a store, but helps you find safe products and brands — buy from a local co-op.' },
+        ]
+      },
+      food: {
+        keywords: ['grocery','coffee','tea','spice','herbs','organic','snack','nuts','dried fruit','olive oil','vinegar','sauce','pasta','rice','cereal','oats','chocolate','candy','vitamins','supplements','protein powder','meal kit','subscription box','food','drink'],
+        alternatives: [
+          { name: 'Local Food Co-op (Locator)', website: 'https://www.coopdirectory.org', search_url: null, type: 'coop', why: 'Member-owned grocery co-ops prioritize local, organic, and fair-trade products.' },
+          { name: 'Thrive Market', website: 'https://thrivemarket.com', search_url: 'https://thrivemarket.com/search?q={q}', type: 'bcorp', why: 'B Corp certified. Organic and natural groceries delivered — membership supports low-income access.' },
+          { name: 'Local Farmers Market (USDA)', website: 'https://www.ams.usda.gov/local-food-directories/farmersmarkets', search_url: null, type: 'local-finder', why: 'Buy directly from farmers — zero middleman, fresher food, supports local agriculture.' },
+          { name: 'Eat Local (FarmersMarket.com)', website: 'https://www.farmersmarket.com', search_url: null, type: 'local-finder', why: 'Find farmers markets and local food sources near you.' },
+        ]
+      },
+      toys: {
+        keywords: ['toy','lego','blocks','puzzle','board game','card game','action figure','doll','stuffed animal','kids','children','baby','infant','toddler','game','play','craft kit','science kit','building set','remote control','rc car','train set'],
+        alternatives: [
+          { name: 'Local Toy Store Finder', website: 'https://www.astra.org/store-finder', search_url: null, type: 'local-finder', why: 'Find an independent toy store near you — they curate quality over volume.' },
+          { name: 'Miniature Market', website: 'https://www.miniaturemarket.com', search_url: 'https://www.miniaturemarket.com/catalogsearch/result/?q={q}', type: 'indie', why: 'Independent retailer specializing in board games, card games, and tabletop RPGs.' },
+          { name: 'Once Upon a Child', website: 'https://www.onceuponachild.com', search_url: null, type: 'secondhand', why: 'Franchise resale shops for kids\' toys and gear — gently used at significant discounts.' },
+          { name: 'ThredUp (Kids)', website: 'https://www.thredup.com/kids', search_url: 'https://www.thredup.com/products?search_text={q}&department=kids', type: 'secondhand', why: 'Kids outgrow things fast — buying secondhand dramatically reduces per-item waste.' },
+          { name: 'Zulily (Independent)', website: 'https://www.zulily.com', search_url: 'https://www.zulily.com/search?query={q}', type: 'indie', why: 'Flash sale site for kids\' brands — not Amazon, often featuring smaller labels.' },
+        ]
+      },
+      art: {
+        keywords: ['paint','paintbrush','canvas','acrylic','watercolor','oil paint','yarn','knitting','crochet','craft','sewing','embroidery','drawing','sketch','colored pencil','marker','paper','notebook','journal','calligraphy','pottery','clay','sculpture','frame','origami','scrapbook'],
+        alternatives: [
+          { name: 'Blick Art Materials', website: 'https://www.dickblick.com', search_url: 'https://www.dickblick.com/search/?q={q}', type: 'indie', why: 'Independently owned art supply chain with over 40 stores — deep selection, fair prices.' },
+          { name: 'Etsy', website: 'https://www.etsy.com', search_url: 'https://www.etsy.com/search?q={q}', type: 'indie', why: 'Handmade and vintage goods marketplace — supports individual artisans and small makers.' },
+          { name: 'Local Art Supply Store', website: 'https://www.dickblick.com/stores/storelocator/', search_url: null, type: 'local-finder', why: 'Your local art supply shop keeps dollars in the community and staff actually know art.' },
+          { name: 'JOANN Stores', website: 'https://www.joann.com', search_url: 'https://www.joann.com/catalogsearch/result/?q={q}', type: 'indie', why: 'Specialty fabric and craft retailer — independently operated, not Amazon-owned.' },
+        ]
+      },
+      pets: {
+        keywords: ['dog','cat','pet','puppy','kitten','bird','fish','hamster','rabbit','pet food','dog food','cat food','leash','collar','crate','litter','cat litter','aquarium','tank','bowl','treats','vet','grooming','flea','tick','heartworm'],
+        alternatives: [
+          { name: 'Local Pet Store (Finder)', website: 'https://www.petco.com/shop/en/petcostore/storelocator', search_url: null, type: 'local-finder', why: 'Independent pet stores often source from local suppliers and have knowledgeable staff.' },
+          { name: 'Chewy', website: 'https://www.chewy.com', search_url: 'https://www.chewy.com/s?query={q}', type: 'indie', why: 'Independently operated pet retailer (not owned by Amazon). Wide selection, good prices.' },
+          { name: 'PetSmart (Independent)', website: 'https://www.petsmart.com', search_url: 'https://www.petsmart.com/search?q={q}', type: 'indie', why: 'Brick-and-mortar chain not affiliated with Amazon — and it adopts out rescue pets in stores.' },
+          { name: 'Revival Animal Health', website: 'https://www.revivalanimal.com', search_url: 'https://www.revivalanimal.com/search?q={q}', type: 'indie', why: 'Family-owned veterinary supply company with strong animal welfare programs.' },
+        ]
+      },
+      general: {
+        keywords: [],
+        alternatives: [
+          { name: 'Etsy', website: 'https://www.etsy.com', search_url: 'https://www.etsy.com/search?q={q}', type: 'indie', why: 'Handmade, vintage, and unique items from independent creators around the world.' },
+          { name: 'eBay', website: 'https://www.ebay.com', search_url: 'https://www.ebay.com/sch/i.html?_nkw={q}', type: 'secondhand', why: 'Large peer-to-peer marketplace — filter for used or local pickup to minimize footprint.' },
+          { name: 'Buy Nothing (App)', website: 'https://buynothingproject.org', search_url: null, type: 'local-finder', why: 'Hyper-local gifting community — get what you need for free from neighbors.' },
+          { name: 'Google Maps Local Search', website: 'https://maps.google.com', search_url: 'https://www.google.com/maps/search/{q}+near+me', type: 'local-finder', why: 'Search for local independent stores near you — keeps money in your community.' },
+          { name: 'Facebook Marketplace', website: 'https://www.facebook.com/marketplace', search_url: 'https://www.facebook.com/marketplace/search?query={q}', type: 'secondhand', why: 'Local buying and selling — great for finding secondhand deals nearby.' },
+          { name: 'Craigslist', website: 'https://craigslist.org', search_url: null, type: 'secondhand', why: 'Classic classifieds — free listings, local pickup, and zero packaging waste.' },
+        ]
+      }
+    };
+
+    const TYPE_LABELS = {
+      indie: 'Indie',
+      coop: 'Co-op',
+      bcorp: 'B Corp',
+      secondhand: 'Secondhand',
+      'local-finder': 'Local Finder',
+    };
+
+    function findCategory(query) {
+      const q = query.toLowerCase();
+      for (const [cat, data] of Object.entries(CATEGORIES)) {
+        if (cat === 'general') continue;
+        if (data.keywords.some(k => q.includes(k))) return cat;
+      }
+      return 'general';
+    }
+
+    function buildSearchUrl(template, query) {
+      if (!template) return null;
+      return template.replace('{q}', encodeURIComponent(query));
+    }
+
+    function renderCard(alt, query, delay) {
+      const searchUrl = buildSearchUrl(alt.search_url, query);
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.style.animationDelay = `${delay}ms`;
+
+      card.innerHTML = `
+        <div class="card-header ${alt.type}">
+          <div class="card-header-top">
+            <span class="store-name">${alt.name}</span>
+            <span class="type-badge">${TYPE_LABELS[alt.type] || alt.type}</span>
+          </div>
+          <div class="store-why">${alt.why}</div>
+        </div>
+        <div class="card-body">
+          <div class="card-buttons">
+            <a class="btn-link btn-website" href="${alt.website}" target="_blank" rel="noopener noreferrer">
+              🌐 Website
+            </a>
+            ${searchUrl ? `<a class="btn-link btn-search" href="${searchUrl}" target="_blank" rel="noopener noreferrer">🔍 Search there</a>` : ''}
+          </div>
+        </div>
+      `;
+      return card;
+    }
+
+    function doSearch(query) {
+      const q = query.trim();
+      if (!q) return;
+
+      const area = document.getElementById('results-area');
+      area.innerHTML = '';
+
+      const cat = findCategory(q);
+      const isGeneral = cat === 'general';
+      const alts = CATEGORIES[cat].alternatives;
+
+      const header = document.createElement('div');
+      header.className = 'results-header';
+      if (isGeneral) {
+        header.textContent = `We don't have specific alternatives for "${q}" — here are some general options:`;
+      } else {
+        const catLabel = cat.charAt(0).toUpperCase() + cat.slice(1);
+        header.textContent = `Found ${alts.length} ethical alternatives in: ${catLabel}`;
+      }
+      area.appendChild(header);
+
+      const grid = document.createElement('div');
+      grid.className = 'cards-grid';
+
+      alts.forEach((alt, i) => {
+        grid.appendChild(renderCard(alt, q, i * 60));
+      });
+
+      area.appendChild(grid);
+    }
+
+    document.getElementById('search-btn').addEventListener('click', () => {
+      doSearch(document.getElementById('search-input').value);
+    });
+
+    document.getElementById('search-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        doSearch(e.target.value);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -206,6 +206,31 @@
     }
 
     .btn-search:hover { background: rgba(74,222,128,0.25); }
+
+    .category-pills {
+      max-width: 700px;
+      margin: 20px auto 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .pill {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(74,222,128,0.35);
+      background: rgba(255,255,255,0.06);
+      color: #86efac;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+
+    .pill:hover { background: rgba(74,222,128,0.15); border-color: #4ade80; color: #f0fdf4; }
+    .pill.active { background: rgba(74,222,128,0.25); border-color: #4ade80; color: #f0fdf4; }
   </style>
 </head>
 <body>
@@ -222,6 +247,7 @@
       />
       <button id="search-btn">Find Alternatives</button>
     </div>
+    <div class="category-pills" id="category-pills"></div>
   </header>
 
   <div id="results-area">
@@ -347,6 +373,35 @@
           { name: 'Revival Animal Health', website: 'https://www.revivalanimal.com', search_url: 'https://www.revivalanimal.com/search?q={q}', type: 'indie', why: 'Family-owned veterinary supply company with strong animal welfare programs.' },
         ]
       },
+      office: {
+        keywords: ['office','printer ink','toner','pen','pencil','binder','folder','sticky note','tape','scissors','envelope','stamp','calendar','planner','whiteboard','highlighter','paper clip','rubber band','stapler','desk supply','stationery'],
+        alternatives: [
+          { name: 'Staples', website: 'https://www.staples.com', search_url: 'https://www.staples.com/search?query={q}', type: 'indie', why: 'Independent office supply chain — not Amazon-owned, with physical stores nationwide.' },
+          { name: 'Quill.com', website: 'https://www.quill.com', search_url: 'https://www.quill.com/search#{q}', type: 'indie', why: 'Independent B2B office supplier with a wide catalog and no Amazon affiliation.' },
+          { name: 'Paper Source', website: 'https://www.papersource.com', search_url: 'https://www.papersource.com/search?q={q}', type: 'indie', why: 'Independent specialty paper and stationery retailer focused on craft and design.' },
+          { name: 'eBay (Office Supplies)', website: 'https://www.ebay.com', search_url: 'https://www.ebay.com/sch/i.html?_nkw={q}+office', type: 'secondhand', why: 'Buy surplus or used office supplies — great for bulk items at a fraction of retail.' },
+        ]
+      },
+      pharmacy: {
+        keywords: ['prescription','pharmacy','medication','medicine','pill','drug','otc','over the counter','first aid','bandage','thermometer','blood pressure','allergy','cold medicine','pain reliever','aspirin','ibuprofen','antibiotic','inhaler','insulin','health'],
+        alternatives: [
+          { name: 'Cost Plus Drugs', website: 'https://costplusdrugs.com', search_url: 'https://costplusdrugs.com/medications/search/?q={q}', type: 'indie', why: 'Mark Cuban\'s radical-transparency pharmacy — generic drugs at near-cost prices.' },
+          { name: 'GoodRx', website: 'https://www.goodrx.com', search_url: 'https://www.goodrx.com/drugs/search?query={q}', type: 'indie', why: 'Free price comparison — find the cheapest pharmacy for any prescription near you.' },
+          { name: 'Independent Pharmacy Finder', website: 'https://www.ncpanet.org/find-a-pharmacy', search_url: null, type: 'local-finder', why: 'Find an independent local pharmacy — faster, more personal, and keeps money local.' },
+          { name: 'Blink Health', website: 'https://www.blinkhealth.com', search_url: 'https://www.blinkhealth.com/search?q={q}', type: 'indie', why: 'Negotiates lower drug prices — pay online, pick up at a local pharmacy.' },
+        ]
+      },
+      streaming: {
+        keywords: ['movie','film','tv show','series','streaming','stream','watch','prime video','prime membership','audible','podcast','documentary','video','subscription','channel','entertainment'],
+        alternatives: [
+          { name: 'Kanopy', website: 'https://www.kanopy.com', search_url: 'https://www.kanopy.com/en/search?q={q}', type: 'coop', why: 'Free with your library card — thousands of films including indie, foreign, and classics.' },
+          { name: 'Hoopla', website: 'https://www.hoopladigital.com', search_url: 'https://www.hoopladigital.com/search?q={q}', type: 'coop', why: 'Free with library card — movies, TV, music, audiobooks, and comics.' },
+          { name: 'Libby (Audiobooks)', website: 'https://libbyapp.com', search_url: null, type: 'coop', why: 'Free audiobooks and ebooks via your library card — the ethical Audible alternative.' },
+          { name: 'MUBI', website: 'https://mubi.com', search_url: 'https://mubi.com/en/search?q={q}', type: 'indie', why: 'Curated indie and arthouse cinema from around the world — supports film culture.' },
+          { name: 'Criterion Channel', website: 'https://www.criterionchannel.com', search_url: 'https://www.criterionchannel.com/search#stq={q}', type: 'indie', why: 'Classic and independent film streaming — independently operated, supports cinema preservation.' },
+          { name: 'Tubi', website: 'https://tubitv.com', search_url: 'https://tubitv.com/search/{q}', type: 'indie', why: 'Free ad-supported streaming — not Amazon, with a huge library of movies and TV.' },
+        ]
+      },
       general: {
         keywords: [],
         alternatives: [
@@ -356,8 +411,16 @@
           { name: 'Google Maps Local Search', website: 'https://maps.google.com', search_url: 'https://www.google.com/maps/search/{q}+near+me', type: 'local-finder', why: 'Search for local independent stores near you — keeps money in your community.' },
           { name: 'Facebook Marketplace', website: 'https://www.facebook.com/marketplace', search_url: 'https://www.facebook.com/marketplace/search?query={q}', type: 'secondhand', why: 'Local buying and selling — great for finding secondhand deals nearby.' },
           { name: 'Craigslist', website: 'https://craigslist.org', search_url: null, type: 'secondhand', why: 'Classic classifieds — free listings, local pickup, and zero packaging waste.' },
+          { name: 'Mercari', website: 'https://www.mercari.com', search_url: 'https://www.mercari.com/search/?keyword={q}', type: 'secondhand', why: 'Large peer-to-peer secondhand marketplace for almost anything — not Amazon-owned.' },
         ]
       }
+    };
+
+    const CATEGORY_LABELS = {
+      books: 'Books', clothing: 'Clothing', electronics: 'Electronics',
+      music: 'Music', outdoor: 'Outdoor', home: 'Home', tools: 'Tools',
+      beauty: 'Beauty', food: 'Food', toys: 'Toys', art: 'Art & Crafts',
+      pets: 'Pets', office: 'Office', pharmacy: 'Pharmacy', streaming: 'Streaming',
     };
 
     const TYPE_LABELS = {
@@ -408,35 +471,43 @@
       return card;
     }
 
+    function setActivePill(cat) {
+      document.querySelectorAll('.pill').forEach(p => {
+        p.classList.toggle('active', p.dataset.cat === cat);
+      });
+    }
+
+    function showResults(alts, headerText, query) {
+      const area = document.getElementById('results-area');
+      area.innerHTML = '';
+      const header = document.createElement('div');
+      header.className = 'results-header';
+      header.textContent = headerText;
+      area.appendChild(header);
+      const grid = document.createElement('div');
+      grid.className = 'cards-grid';
+      alts.forEach((alt, i) => grid.appendChild(renderCard(alt, query, i * 60)));
+      area.appendChild(grid);
+    }
+
+    function browseCategory(cat) {
+      setActivePill(cat);
+      document.getElementById('search-input').value = '';
+      const alts = CATEGORIES[cat].alternatives;
+      showResults(alts, `Browsing ${alts.length} ethical alternatives in: ${CATEGORY_LABELS[cat]}`, '');
+    }
+
     function doSearch(query) {
       const q = query.trim();
       if (!q) return;
-
-      const area = document.getElementById('results-area');
-      area.innerHTML = '';
-
+      setActivePill(null);
       const cat = findCategory(q);
       const isGeneral = cat === 'general';
       const alts = CATEGORIES[cat].alternatives;
-
-      const header = document.createElement('div');
-      header.className = 'results-header';
-      if (isGeneral) {
-        header.textContent = `We don't have specific alternatives for "${q}" — here are some general options:`;
-      } else {
-        const catLabel = cat.charAt(0).toUpperCase() + cat.slice(1);
-        header.textContent = `Found ${alts.length} ethical alternatives in: ${catLabel}`;
-      }
-      area.appendChild(header);
-
-      const grid = document.createElement('div');
-      grid.className = 'cards-grid';
-
-      alts.forEach((alt, i) => {
-        grid.appendChild(renderCard(alt, q, i * 60));
-      });
-
-      area.appendChild(grid);
+      const headerText = isGeneral
+        ? `We don't have specific alternatives for "${q}" — here are some general options:`
+        : `Found ${alts.length} ethical alternatives in: ${CATEGORY_LABELS[cat]}`;
+      showResults(alts, headerText, q);
     }
 
     document.getElementById('search-btn').addEventListener('click', () => {
@@ -444,9 +515,18 @@
     });
 
     document.getElementById('search-input').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        doSearch(e.target.value);
-      }
+      if (e.key === 'Enter') doSearch(e.target.value);
+    });
+
+    // Render category pills
+    const pillsContainer = document.getElementById('category-pills');
+    Object.entries(CATEGORY_LABELS).forEach(([cat, label]) => {
+      const pill = document.createElement('button');
+      pill.className = 'pill';
+      pill.dataset.cat = cat;
+      pill.textContent = label;
+      pill.addEventListener('click', () => browseCategory(cat));
+      pillsContainer.appendChild(pill);
     });
   </script>
 </body>

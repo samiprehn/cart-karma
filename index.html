@@ -18,6 +18,8 @@
       transition: color 150ms;
     }
     .bmc-link:hover { color: rgba(240, 253, 244, 0.85); }
+    .bmc-link a { color: inherit; text-decoration: none; }
+    .bmc-link .sep { margin: 0 0.5rem; opacity: 0.6; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -337,6 +339,7 @@
   <script>
     const CATEGORIES = {
       books: {
+        label: "Books",
         keywords: ['book','novel','textbook','audiobook','kindle','ebook','fiction','nonfiction','thriller','memoir','biography','poetry','graphic novel','manga','comic','literature','reading','paperback','hardcover'],
         alternatives: [
           { name: 'Bookshop.org', website: 'https://bookshop.org', search_url: 'https://bookshop.org/search?keywords={q}', type: 'bcorp', why: 'B Corp certified. 10% of every purchase goes directly to independent bookstores.' },
@@ -348,6 +351,7 @@
         ]
       },
       clothing: {
+        label: "Clothing",
         keywords: ['shirt','t-shirt','shoes','sneakers','boots','jeans','jacket','coat','dress','pants','hoodie','sweater','socks','underwear','shorts','leggings','clothing','apparel','fashion','outfit','wear','hat','cap','scarf','gloves','swimwear','activewear','sportswear','uniform'],
         alternatives: [
           { name: 'ThredUp', website: 'https://www.thredup.com', search_url: 'https://www.thredup.com/products?search_text={q}', type: 'secondhand', why: 'Online consignment store — buying secondhand extends clothing life and cuts waste.' },
@@ -359,6 +363,7 @@
         ]
       },
       electronics: {
+        label: "Electronics",
         keywords: ['laptop','computer','phone','smartphone','tablet','ipad','headphones','earbuds','speaker','monitor','keyboard','mouse','charger','cable','battery','camera','tv','television','gaming','console','printer','router','smart home','alexa','echo','fire tv','ring'],
         alternatives: [
           { name: 'Back Market', website: 'https://www.backmarket.com', search_url: 'https://www.backmarket.com/en-us/search?q={q}', type: 'bcorp', why: 'B Corp certified. Certified refurbished electronics — extends device life, cuts e-waste.' },
@@ -368,6 +373,7 @@
         ]
       },
       music: {
+        label: "Music",
         keywords: ['vinyl','record','cd','album','bandcamp','music','turntable','lp','cassette','tape','guitar','piano','instrument','sheet music','musician','band','concert','playlist','streaming'],
         alternatives: [
           { name: 'Bandcamp', website: 'https://bandcamp.com', search_url: 'https://bandcamp.com/search?q={q}', type: 'indie', why: 'Artists keep 80–85% of revenue. Directly funds musicians and independent labels.' },
@@ -377,6 +383,7 @@
         ]
       },
       outdoor: {
+        label: "Outdoor",
         keywords: ['hiking','camping','tent','backpack','sleeping bag','kayak','canoe','climbing','bike','bicycle','fishing','hunting','trail','outdoor','ski','snowboard','surfboard','paddleboard','hammock','trekking','running','marathon','triathlon'],
         alternatives: [
           { name: 'REI', website: 'https://www.rei.com', search_url: 'https://www.rei.com/search?q={q}', type: 'coop', why: 'Consumer co-op owned by its members. Returns dividends to members and funds trail conservation.' },
@@ -387,6 +394,7 @@
         ]
       },
       home: {
+        label: "Home",
         keywords: ['furniture','couch','sofa','chair','table','desk','bed','mattress','lamp','rug','curtain','pillow','blanket','cookware','pot','pan','knife','dishes','towel','bedding','shelf','cabinet','dresser','decor','vase','frame','candle','kitchen','bathroom'],
         alternatives: [
           { name: 'Chairish', website: 'https://www.chairish.com', search_url: 'https://www.chairish.com/search/{q}', type: 'secondhand', why: 'Curated secondhand and vintage furniture and decor — beautiful pieces, less waste.' },
@@ -397,6 +405,7 @@
         ]
       },
       tools: {
+        label: "Tools",
         keywords: ['drill','hammer','saw','wrench','screwdriver','tool','plumbing','electrical','lumber','hardware','plywood','pipe','paint','ladder','lawn mower','leaf blower','pressure washer','garden','gardening','hose','shovel','rake','mulch','seeds','fertilizer'],
         alternatives: [
           { name: 'Ace Hardware', website: 'https://www.acehardware.com', search_url: 'https://www.acehardware.com/search?query={q}', type: 'coop', why: 'Retailer-owned cooperative — Ace stores are independently owned local businesses.' },
@@ -405,6 +414,7 @@
         ]
       },
       beauty: {
+        label: "Beauty",
         keywords: ['shampoo','conditioner','soap','body wash','makeup','lipstick','foundation','mascara','skincare','moisturizer','sunscreen','serum','lotion','razor','deodorant','toothbrush','toothpaste','perfume','cologne','nail polish','hair dye','face wash','cleanser'],
         alternatives: [
           { name: 'Package Free Shop', website: 'https://packagefreeshop.com', search_url: 'https://packagefreeshop.com/search?type=product&q={q}', type: 'bcorp', why: 'Zero-waste personal care and home products — minimal or compostable packaging.' },
@@ -414,6 +424,7 @@
         ]
       },
       food: {
+        label: "Food",
         keywords: ['grocery','coffee','tea','spice','herbs','organic','snack','nuts','dried fruit','olive oil','vinegar','sauce','pasta','rice','cereal','oats','chocolate','candy','vitamins','supplements','protein powder','meal kit','subscription box','food','drink'],
         alternatives: [
           { name: 'Local Food Co-op', website: 'https://www.google.com/search?q=food+co-op+near+me', search_url: null, type: 'coop', why: 'Member-owned grocery co-ops prioritize local, organic, and fair-trade products.' },
@@ -423,6 +434,7 @@
         ]
       },
       toys: {
+        label: "Toys",
         keywords: ['toy','lego','blocks','puzzle','board game','card game','action figure','doll','stuffed animal','kids','children','baby','infant','toddler','game','play','craft kit','science kit','building set','remote control','rc car','train set'],
         alternatives: [
           { name: 'Local Toy Store Finder', website: 'https://www.google.com/search?q=independent+toy+store+near+me', search_url: null, type: 'local-finder', why: 'Find an independent toy store near you — they curate quality over volume.' },
@@ -433,6 +445,7 @@
         ]
       },
       art: {
+        label: "Art & Crafts",
         keywords: ['paint','paintbrush','canvas','acrylic','watercolor','oil paint','yarn','knitting','crochet','craft','sewing','embroidery','drawing','sketch','colored pencil','marker','paper','notebook','journal','calligraphy','pottery','clay','sculpture','frame','origami','scrapbook'],
         alternatives: [
           { name: 'Blick Art Materials', website: 'https://www.dickblick.com', search_url: 'https://www.dickblick.com/search/?q={q}', type: 'indie', why: 'Independently owned art supply chain with over 40 stores — deep selection, fair prices.' },
@@ -442,6 +455,7 @@
         ]
       },
       pets: {
+        label: "Pets",
         keywords: ['dog','cat','pet','puppy','kitten','bird','fish','hamster','rabbit','pet food','dog food','cat food','leash','collar','crate','litter','cat litter','aquarium','tank','bowl','treats','vet','grooming','flea','tick','heartworm'],
         alternatives: [
           { name: 'Local Pet Store Finder', website: 'https://www.google.com/search?q=independent+pet+store+near+me', search_url: null, type: 'local-finder', why: 'Independent pet stores often source from local suppliers and have knowledgeable staff.' },
@@ -451,6 +465,7 @@
         ]
       },
       office: {
+        label: "Office",
         keywords: ['office','printer ink','toner','pen','pencil','binder','folder','sticky note','tape','scissors','envelope','stamp','calendar','planner','whiteboard','highlighter','paper clip','rubber band','stapler','desk supply','stationery'],
         alternatives: [
           { name: 'Staples', website: 'https://www.staples.com', search_url: 'https://www.staples.com/search?query={q}', type: 'indie', why: 'Independent office supply chain with physical stores nationwide.' },
@@ -459,6 +474,7 @@
         ]
       },
       pharmacy: {
+        label: "Pharmacy",
         keywords: ['prescription','pharmacy','medication','medicine','pill','drug','otc','over the counter','first aid','bandage','thermometer','blood pressure','allergy','cold medicine','pain reliever','aspirin','ibuprofen','antibiotic','inhaler','insulin','health'],
         alternatives: [
           { name: 'Cost Plus Drugs', website: 'https://costplusdrugs.com', search_url: 'https://costplusdrugs.com/medications/search/?q={q}', type: 'indie', why: 'Mark Cuban\'s radical-transparency pharmacy — generic drugs at near-cost prices.' },
@@ -469,6 +485,7 @@
         ]
       },
       streaming: {
+        label: "Streaming",
         keywords: ['movie','film','tv show','series','streaming','stream','watch','prime video','prime membership','audible','podcast','documentary','video','subscription','channel','entertainment'],
         alternatives: [
           { name: 'Kanopy', website: 'https://www.kanopy.com', search_url: 'https://www.kanopy.com/en/search?q={q}', type: 'coop', why: 'Free with your library card — thousands of films including indie, foreign, and classics.' },
@@ -480,6 +497,7 @@
         ]
       },
       general: {
+        label: "General",
         keywords: [],
         alternatives: [
           { name: 'Etsy', website: 'https://www.etsy.com', search_url: 'https://www.etsy.com/search?q={q}', type: 'indie', why: 'Handmade, vintage, and unique items from independent creators around the world.' },
@@ -491,14 +509,6 @@
           { name: 'Mercari', website: 'https://www.mercari.com', search_url: 'https://www.mercari.com/search/?keyword={q}', type: 'secondhand', why: 'Large peer-to-peer secondhand marketplace for almost anything.' },
         ]
       }
-    };
-
-    const CATEGORY_LABELS = {
-      books: 'Books', clothing: 'Clothing', electronics: 'Electronics',
-      music: 'Music', outdoor: 'Outdoor', home: 'Home', tools: 'Tools',
-      beauty: 'Beauty', food: 'Food', toys: 'Toys', art: 'Art & Crafts',
-      pets: 'Pets', office: 'Office', pharmacy: 'Pharmacy', streaming: 'Streaming',
-      general: 'General',
     };
 
     const TYPE_LABELS = {
@@ -555,8 +565,11 @@
       });
     }
 
+    const searchInput = document.getElementById('search-input');
+    const resultsArea = document.getElementById('results-area');
+
     function showResults(alts, headerText, query) {
-      const area = document.getElementById('results-area');
+      const area = resultsArea;
       area.innerHTML = '';
       const header = document.createElement('div');
       header.className = 'results-header';
@@ -570,9 +583,9 @@
 
     function browseCategory(cat) {
       setActivePill(cat);
-      document.getElementById('search-input').value = '';
+      searchInput.value = '';
       const alts = CATEGORIES[cat].alternatives;
-      showResults(alts, `Browsing ${alts.length} ethical alternatives in: ${CATEGORY_LABELS[cat]}`, '');
+      showResults(alts, `Browsing ${alts.length} ethical alternatives in: ${CATEGORIES[cat].label}`, '');
     }
 
     function doSearch(query) {
@@ -584,33 +597,33 @@
       const alts = CATEGORIES[cat].alternatives;
       const headerText = isGeneral
         ? `We don't have specific alternatives for "${q}" — here are some general options:`
-        : `Found ${alts.length} ethical alternatives in: ${CATEGORY_LABELS[cat]}`;
+        : `Found ${alts.length} ethical alternatives in: ${CATEGORIES[cat].label}`;
       showResults(alts, headerText, q);
     }
 
     document.getElementById('search-btn').addEventListener('click', () => {
-      doSearch(document.getElementById('search-input').value);
+      doSearch(searchInput.value);
     });
 
-    document.getElementById('search-input').addEventListener('keydown', (e) => {
+    searchInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') doSearch(e.target.value);
     });
 
     // Render category pills
     const pillsContainer = document.getElementById('category-pills');
-    Object.entries(CATEGORY_LABELS).forEach(([cat, label]) => {
+    Object.entries(CATEGORIES).forEach(([cat, data]) => {
       const pill = document.createElement('button');
       pill.className = 'pill';
       pill.dataset.cat = cat;
-      pill.textContent = label;
+      pill.textContent = data.label;
       pill.addEventListener('click', () => browseCategory(cat));
       pillsContainer.appendChild(pill);
     });
   </script>
-  <div class="bmc-link" style="display:block;">
-    <a href="https://buymeacoffee.com/samiprehn" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;">Keep this page running</a>
-    <span style="margin:0 0.5rem;opacity:0.6;">|</span>
-    <a href="https://samiprehn.github.io/" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;">Sami's other sites →</a>
+  <div class="bmc-link">
+    <a href="https://buymeacoffee.com/samiprehn" target="_blank" rel="noopener noreferrer">Keep this page running</a>
+    <span class="sep">|</span>
+    <a href="https://samiprehn.github.io/" target="_blank" rel="noopener noreferrer">Sami's other sites →</a>
   </div>
 </body>
 </html>
